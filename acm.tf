@@ -42,3 +42,4 @@ resource "aws_acm_certificate_validation" "cert_valid" {
   certificate_arn         = aws_acm_certificate.tokyo_cert.arn
   validation_record_fqdns = [for record in aws_route53_record.route53_acm_dns_resolve : record.fqdn]
 }
+
