@@ -11,9 +11,12 @@ resource "random_string" "s3_unique_key" {
 # ------------------------
 resource "aws_s3_bucket" "s3_static_bucket" {
   bucket = "${var.project}-${var.environment}-s3-static-bucket-${random_string.s3_unique_key.result}"
+}
 
-  versioning {
-    enabled = false
+resource "aws_s3_bucket_versioning" "s3_static_bucket_versioning" {
+  bucket = aws_s3_bucket.s3_static_bucket.id
+  versioning_configuration {
+    status = "Suspended"
   }
 }
 
@@ -37,9 +40,11 @@ data "aws_iam_policy_document" "s3_static_bucket" {
   statement {
     effect = "Allow"
     actions = [
+      "s3:PutBucketPolicy",
       "s3:GetObject"
     ]
     resources = [
+      "${aws_s3_bucket.s3_static_bucket.arn}",
       "${aws_s3_bucket.s3_static_bucket.arn}/*"
     ]
     principals {
